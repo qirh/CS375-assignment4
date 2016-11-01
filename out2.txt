@@ -1,8 +1,0 @@
-(program graph1 (progn output)
-                (progn (:= lim 7)
-                       (progn (:= i lim)
-                              (label 0)
-                              (if (<= i lim)
-                                  (progn (funcall writeln '*')
-                                         (:= i (+ i 1))
-                                         (goto 0))
