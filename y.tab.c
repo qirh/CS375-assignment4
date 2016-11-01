@@ -2111,7 +2111,7 @@ yyreturn:
    are working.
   */
 
-#define DEBUG 1
+#define DEBUG 0
 
  int labelnumber = 0;  /* sequential counter for internal label numbers */
 
@@ -2129,6 +2129,7 @@ TOKEN cons(TOKEN item, TOKEN list) {
   printdeubg("cons() ends\n");
   return item;
 }
+
 TOKEN unaryop(TOKEN op, TOKEN lhs) {
   printdeubg("unaryop()\n");
   op->operands = lhs;
@@ -2136,6 +2137,7 @@ TOKEN unaryop(TOKEN op, TOKEN lhs) {
   printdeubg("unaryop() ends\n");
   return op;
 }
+
 TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs) { 
   printdeubg("binop()\n");
   op->operands = lhs;          /* link operands to operator       */
@@ -2149,6 +2151,7 @@ TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs) {
   printdeubg("binop() ends\n");
   return op;
 }
+
 TOKEN findid(TOKEN tok){
   printdeubg("findid()\n");
   SYMBOL sym, typ;
@@ -2163,21 +2166,17 @@ TOKEN findid(TOKEN tok){
       tok->datatype = typ->basicdt;
   }
   else{ //sym->kind == CONSTSYM
+    tok->tokentype = NUMBERTOK;
 
     if(sym->basicdt ==0){           //INTEGER
-      tok->tokentype = NUMBERTOK;
       tok->datatype = INTEGER;
       tok->intval = sym->constval.intnum;
     }
     else if(sym->basicdt == 1){     //REAL
-      tok->tokentype = NUMBERTOK;
       tok->datatype = REAL;
       tok->realval = sym->constval.realnum;
     }
-    else
-      printf("XXXXXXXXxxxxXXXXXXXXXX HERE -- &dn", sym->basicdt);
   }
-
   if (DEBUG) { 
     dbugprinttok(tok);
   }
@@ -2185,12 +2184,19 @@ TOKEN findid(TOKEN tok){
   printdeubg("findid() ends\n");
   return tok;
 }
+
 void instvars(TOKEN id_list, TOKEN typetok) {
   printdeubg("instvars() \n");
 
   SYMBOL sym, typesym;
   typesym = typetok->symtype;
-  int align = (typesym->size > 4) ? 16 : typesym->size;  //4 is alignment requirement, 16 is padding
+
+  int align;
+  //4 is alignment requirement, 16 is padding
+  if(typesym->size > 4)
+    align = 16;
+  else
+    typesym->size;
 
   while (id_list != NULL) {
     sym = insertsym(id_list->stringval);
@@ -2204,6 +2210,7 @@ void instvars(TOKEN id_list, TOKEN typetok) {
   }
   printdeubg("instvars() ends\n");
 }
+
 void  instconst(TOKEN idtok, TOKEN consttok) {
   printdeubg("instconst()\n");
 
@@ -2234,6 +2241,7 @@ void  instconst(TOKEN idtok, TOKEN consttok) {
   }
   printdeubg("instconst() ends\n");
 }
+
 TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart) {
   printdeubg("makeif()\n");
   tok->tokentype = OPERATOR; /* Make it look like an operator   */
@@ -2251,6 +2259,7 @@ TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart) {
   printdeubg("makeif() ends\n");
   return tok;
 }
+
 TOKEN makeprogn(TOKEN tok, TOKEN statements) {
   printdeubg("makeprogn()\n");
   tok->tokentype = OPERATOR;
@@ -2264,6 +2273,7 @@ TOKEN makeprogn(TOKEN tok, TOKEN statements) {
   printdeubg("makeprogn() ends\n");
   return tok;
 }
+
 TOKEN makelabel() {
   printdeubg("makelabel()\n");
   TOKEN tok = talloc();
@@ -2274,6 +2284,7 @@ TOKEN makelabel() {
   printdeubg("makelabel() ends\n");
   return tok;
 }
+
 TOKEN makegoto(int label) {
   printdeubg("makegoto()\n");
   TOKEN gotoTok = talloc();
@@ -2283,6 +2294,7 @@ TOKEN makegoto(int label) {
   printdeubg("makegoto() ends\n");
   return gotoTok;
 }
+
 TOKEN makefuncall(TOKEN tok, TOKEN fn, TOKEN args) {
   printdeubg("makefuncall() with args\n");
   ppexpr(args);
@@ -2295,6 +2307,7 @@ TOKEN makefuncall(TOKEN tok, TOKEN fn, TOKEN args) {
   printdeubg("makefuncall() ends\n");
   return tok;
 }
+
 TOKEN makeintc(int num) {
   printdeubg("makeintc()\n");
   TOKEN intMade = talloc();
@@ -2304,6 +2317,7 @@ TOKEN makeintc(int num) {
   printdeubg("makeintc() ends\n");
   return intMade;
 }
+
 TOKEN makeprogram(TOKEN name, TOKEN args, TOKEN statements) {
   printdeubg("makeprogram()");
   if(DEBUG){
@@ -2325,6 +2339,7 @@ TOKEN makeprogram(TOKEN name, TOKEN args, TOKEN statements) {
   printdeubg("makeprogram() ends\n");
   return program;
 }
+
 TOKEN makefor(int sign, TOKEN tok, TOKEN asg, TOKEN tokb, TOKEN endexpr, TOKEN tokc, TOKEN statement) {
 
   printdeubg("makefor()\n\t");
@@ -2416,6 +2431,7 @@ TOKEN makefor(int sign, TOKEN tok, TOKEN asg, TOKEN tokb, TOKEN endexpr, TOKEN t
   return tok;
 
 }
+
 TOKEN makerepeat(TOKEN tok, TOKEN statements, TOKEN tokxzczxv, TOKEN expr) {
   printdeubg("makerepeat() \n");
 
@@ -2436,7 +2452,6 @@ TOKEN makerepeat(TOKEN tok, TOKEN statements, TOKEN tokxzczxv, TOKEN expr) {
   
   tok1->operands = tok2;
   tok2->operands = tok3;
-  
   tok2->link= statements; 
   
   printdeubg("this is what tok1 looks like after making the correction: \n");
@@ -2472,8 +2487,8 @@ TOKEN makerepeat(TOKEN tok, TOKEN statements, TOKEN tokxzczxv, TOKEN expr) {
   }
   printdeubg("makerepeat() ends \n");
   return tok1;
-
 }
+
 TOKEN findtype(TOKEN tok) {
   printdeubg("findtype() \n");
 
@@ -2496,6 +2511,7 @@ TOKEN findtype(TOKEN tok) {
   printdeubg("findtype() ends\n");
   return tok;
 }
+
 void printdeubg (char arr[]) {
   char array[sizeof(arr) + 1];
   for (int i=0; i < sizeof(arr); i++)
