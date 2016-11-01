@@ -2150,7 +2150,7 @@ TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs) {
   return op;
 }
 TOKEN findid(TOKEN tok){
-
+  printdeubg("findid()\n");
   SYMBOL sym, typ;
   sym = searchst(tok->stringval);
 
@@ -2171,11 +2171,11 @@ TOKEN findid(TOKEN tok){
     }
     else if(sym->basicdt == 1){     //REAL
       tok->tokentype = NUMBERTOK;
-      tok->datatype = INTEGER;
-      tok->intval = sym->constval.intnum;
+      tok->datatype = REAL;
+      tok->realval = sym->constval.realnum;
     }
     else
-      printf("XXXXXXXXxxxxXXXXXXXXXX HERE");
+      printf("XXXXXXXXxxxxXXXXXXXXXX HERE -- &dn", sym->basicdt);
   }
 
   if (DEBUG) { 
@@ -2217,17 +2217,15 @@ void  instconst(TOKEN idtok, TOKEN consttok) {
 
   sym->basicdt = consttok->datatype;
 
+  //INTEGER
+  if(sym->basicdt == 0){
+    sym->size = 4;
+    sym->constval.intnum = consttok-> intval;
+  }
   //REAL
-  if(sym->basicdt == 1){  
-    printdeubg("instconst() 2\n");
+  else if(sym->basicdt == 1){  
     sym->size = 8;
     sym->constval.realnum = consttok-> realval;
-  }
-  //INTEGER
-  else if(sym->basicdt == 0){
-    printdeubg("instconst() 3\n");
-    sym->basicdt = 4;
-    sym->constval.intnum = consttok-> intval;
   }
 
   if (DEBUG) { 
@@ -2268,13 +2266,13 @@ TOKEN makeprogn(TOKEN tok, TOKEN statements) {
 }
 TOKEN makelabel() {
   printdeubg("makelabel()\n");
-  TOKEN l = talloc();
-  l->tokentype = OPERATOR;
-  l->whichval = LABELOP;
-  l->operands = makeintc(labelnumber);
+  TOKEN tok = talloc();
+  tok->tokentype = OPERATOR;
+  tok->whichval = LABELOP;
+  tok->operands = makeintc(labelnumber);
   labelnumber += 1;
   printdeubg("makelabel() ends\n");
-  return l;
+  return tok;
 }
 TOKEN makegoto(int label) {
   printdeubg("makegoto()\n");
@@ -2307,8 +2305,13 @@ TOKEN makeintc(int num) {
   return intMade;
 }
 TOKEN makeprogram(TOKEN name, TOKEN args, TOKEN statements) {
-  printdeubg("makeprogram() with args:\n\t");
-  ppexpr(args);
+  printdeubg("makeprogram()");
+  if(DEBUG){
+    printf(" with args:\n\t");
+    ppexpr(args);
+  }
+  else
+    printf("\n");
   TOKEN program = talloc();
   TOKEN tmpArgs = talloc();
   program->tokentype = OPERATOR;
@@ -2320,7 +2323,6 @@ TOKEN makeprogram(TOKEN name, TOKEN args, TOKEN statements) {
   tmpArgs->link = statements;
   
   printdeubg("makeprogram() ends\n");
-
   return program;
 }
 TOKEN makefor(int sign, TOKEN tok, TOKEN asg, TOKEN tokb, TOKEN endexpr, TOKEN tokc, TOKEN statement) {

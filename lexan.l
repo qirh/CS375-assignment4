@@ -184,10 +184,9 @@ int install_id()
 
 int install_fnum() {  /* Note -- you may use sscanf for this assignment. */
   float fnum;
-  yylval = (TOKEN) talloc();   /* Make new token, set yylval to point to it */
+  yylval = (TOKEN) talloc();  
   yylval->tokentype = NUMBERTOK;
   yylval->datatype = REAL;
-       /* printf("num %10s   n = %4d\n",yytext,yyleng); */
   sscanf(yytext, "%f", &fnum);
   yylval->realval = fnum;
   return(NUMBER);
