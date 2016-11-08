@@ -52,12 +52,13 @@
 #include "parse.h"
 #include <string.h>
 
+
         /* define the type of the Yacc stack element to be TOKEN */
 
 #define YYSTYPE TOKEN
 
 TOKEN parseresult;
-void printdeubg(char arr[]);
+
 
 %}
 
@@ -272,12 +273,12 @@ void instvars(TOKEN id_list, TOKEN typetok) {
   SYMBOL sym, typesym;
   typesym = typetok->symtype;
 
-  int align;
+  int align = 0;
   //4 is alignment requirement, 16 is padding
   if(typesym->size > 4)
     align = 16;
   else
-    typesym->size;
+    align = alignsize(typesym);
 
   while (id_list != NULL) {
     sym = insertsym(id_list->stringval);
@@ -594,13 +595,16 @@ TOKEN findtype(TOKEN tok) {
 }
 
 void printdeubg (char arr[]) {
+  /*
   char array[sizeof(arr) + 1];
-  for (int i=0; i < sizeof(arr); i++)
+  int i;
+  for (i=0; i < sizeof(arr); i++)
     array[i] = arr[i];
   array[sizeof(arr)] = '\0';
 
   if (DEBUG)
     printf("%s", arr);
+  */
 }
 int wordaddress(int n, int wordsize) {
   return ((n + wordsize - 1) / wordsize) * wordsize;

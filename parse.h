@@ -194,3 +194,5 @@ TOKEN instarray(TOKEN bounds, TOKEN typetok);
 
 /* talloc allocates a new TOKEN record. */
 TOKEN talloc();
+
+void printdeubg(char arr[]);
