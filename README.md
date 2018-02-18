@@ -1,6 +1,6 @@
-## CS375 Compilers. Assignment 4 (Parser using yacc or C or Lisp Part 2) [![MIT license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://https://raw.githubusercontent.com/qirh/CS375-assignment4/master/LICENSE)
+# CS375 Compilers. Assignment 4 (Parser using yacc or C or Lisp Part 2) [![MIT license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://https://raw.githubusercontent.com/qirh/CS375-assignment4/master/LICENSE)
 
-### Description
+## Description
 Compilers Assignment #4. Done for CS 375, taught by Dr. Novak in the fall of 2016. [Assignment details](https://www.cs.utexas.edu/users/novak/asg-parse.html)
 
 
